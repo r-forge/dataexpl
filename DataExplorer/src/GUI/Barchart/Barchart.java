@@ -20,7 +20,6 @@ public class Barchart extends GUI.Window implements IPlot{
 	JMenuItem item = new JMenuItem("");
 	
 	String[] data;
-
 	
 	Barchart barchart;
 
@@ -73,7 +72,7 @@ public class Barchart extends GUI.Window implements IPlot{
 		this.variables = variables;
 		this.data = data;
 		
-		IData.getIData().windowMenu.add(item);
+		if (IData.getIData().windowMenu != null) IData.getIData().windowMenu.add(item);
 		
 		
 	}

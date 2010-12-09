@@ -5,10 +5,7 @@ import Data.ISelectable;
 import GUI.*;
 import GUI.IconsManager.IconsManager;
 import DataTree.*;
-import GUI.Histogram.*;
 import GUI.Barchart.*;
-import GUI.Heatmap.*;
-
 
 import java.util.*;
 import java.io.*;
@@ -143,7 +140,7 @@ public class IData extends JFrame {
 		super("IData");
 		this.setBounds(0, 0, 330, 400);
 		
-		RConnectionManager.tryToConnect(this);
+	//	RConnectionManager.tryToConnect(this);
 		loadMainWindow();
 
 		//new Container();

@@ -49,8 +49,8 @@ public class Window implements MouseListener,MouseMotionListener{
 			
 		//  g.setRenderingHint( RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		    
-		  g.setColor(Color.WHITE);
-		  g.fillRect(x,y,width,height);
+		//  g.setColor(Color.WHITE);
+		 // g.fillRect(x,y,width,height);
 		  
 		 // if (isMouseIn) paintBorder(g);
 		  

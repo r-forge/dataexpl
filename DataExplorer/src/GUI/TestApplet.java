@@ -26,7 +26,7 @@ Container container;
 	
 	public void init()  
 	 { 
-		System.out.println("Init Applet...");
+		System.out.println("Init Applet......");
 		
 		//String file = getParameter("File");
        
@@ -37,14 +37,13 @@ Container container;
         	
 		
 		DataLoader.loadFromStringArray(Data.data);
+		SelectionManager.getSelectionManager().deleteAllContainers();
 		container = SelectionManager.getSelectionManager().getCurrentContainer();
     	container.applet = this;
     	addMouseListener(container);
    		addMouseMotionListener(container);
     	
 		
-		
-	    System.out.println(" Variables:   "+dm.Variables);
         for (int i = 0; i < dm.Variables.size(); i++) {
 		        Variable var = dm.Variables.elementAt(i);	
 		        if (var.type==Variable.String) {
@@ -58,19 +57,12 @@ Container container;
 		}
 
 		}
-        System.out.println("Winodws: "+container.windows.size());
-		
-		
-		
-	  
+       
+        
 	 }
 	
 	
-	 
-	 public void start() {
-	     System.out.println("Start Applet");	 
-	 }
-	 
+	
 	 
 	 
 	 

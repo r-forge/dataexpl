@@ -114,7 +114,15 @@ public class SelectionManager {
 		
 
 	}
-
+	
+	
+	
+    public void deleteAllContainers() {
+    	containers = new Vector();
+    	currentContainer = null;
+    }
+    
+    
 	
 	public Container getCurrentContainer() {
 		if (currentContainer == null) {
