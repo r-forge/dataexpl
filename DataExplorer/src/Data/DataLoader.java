@@ -20,14 +20,14 @@ public class DataLoader {
 
     
 	
-	public static void loadGeneExpressions(DataManager dataManager,BufferedReader bfr, String fileName,FileDialog fileDialog) {
+	public static void loadFile(BufferedReader bfr, String fileName,FileDialog fileDialog) {
 		
 
-
+        DataManager dataManager = DataManager.getDataManager();
         
 		try {
 
-			dataManager.variables = new Vector();
+			dataManager.Variables = new Vector();
 
 			String line = bfr.readLine();
 
@@ -36,7 +36,7 @@ public class DataLoader {
 			MyStringTokenizer stk = new MyStringTokenizer(line);
 			int col = 0;
 			while (stk.hasMoreTokens()) {
-				dataManager.variables.add(new Variable(dataManager,stk.nextToken(),Variable.Double, col));
+				dataManager.Variables.add(new Variable(dataManager,stk.nextToken(),Variable.Double, col));
 				col++;
 			}
 
@@ -73,8 +73,8 @@ public class DataLoader {
 			
 			line = bfr.readLine();
 
-			for (int i = 0; i < dataManager.variables.size(); i++) {
-				Variable var = dataManager.variables.elementAt(i);
+			for (int i = 0; i < dataManager.Variables.size(); i++) {
+				Variable var = dataManager.Variables.elementAt(i);
 				var.setColumn(new double[length]);
 				var.isNotNA = new boolean[length];
 				var.stringData = new String[length];
@@ -98,37 +98,37 @@ public class DataLoader {
 				for (int i = 0; i < col; i++) {
 					token = st.nextToken();
 
-					if ((dataManager.variables.elementAt(i)).type == Variable.Double) {
+					if ((dataManager.Variables.elementAt(i)).type == Variable.Double) {
 						try {
-							(dataManager.variables.elementAt(i)).setValue(len,new Double(token).doubleValue());
+							(dataManager.Variables.elementAt(i)).setValue(len,new Double(token).doubleValue());
 
-							(dataManager.variables.elementAt(i)).isNotNA[len] = true;
-							if ((dataManager.variables.elementAt(i)).getValue(len) > (dataManager.variables.elementAt(i)).max) {
-								(dataManager.variables.elementAt(i)).max = (dataManager.variables.elementAt(i)).getValue(len);
+							(dataManager.Variables.elementAt(i)).isNotNA[len] = true;
+							if ((dataManager.Variables.elementAt(i)).getValue(len) > (dataManager.Variables.elementAt(i)).max) {
+								(dataManager.Variables.elementAt(i)).max = (dataManager.Variables.elementAt(i)).getValue(len);
 							}
-							if ((dataManager.variables.elementAt(i)).getValue(len) < (dataManager.variables.elementAt(i)).min) {
-								(dataManager.variables.elementAt(i)).min = (dataManager.variables.elementAt(i)).getValue(len);
+							if ((dataManager.Variables.elementAt(i)).getValue(len) < (dataManager.Variables.elementAt(i)).min) {
+								(dataManager.Variables.elementAt(i)).min = (dataManager.Variables.elementAt(i)).getValue(len);
 							}
 
-							if ((dataManager.variables.elementAt(i)).getValue(len) > dataManager.maxValue) {
-								dataManager.maxValue = (dataManager.variables.elementAt(i)).getValue(len);
+							if ((dataManager.Variables.elementAt(i)).getValue(len) > dataManager.maxValue) {
+								dataManager.maxValue = (dataManager.Variables.elementAt(i)).getValue(len);
 							}
-							if ((dataManager.variables.elementAt(i)).getValue(len) < dataManager.minValue) {
-								dataManager.minValue = (dataManager.variables.elementAt(i)).getValue(len);
+							if ((dataManager.Variables.elementAt(i)).getValue(len) < dataManager.minValue) {
+								dataManager.minValue = (dataManager.Variables.elementAt(i)).getValue(len);
 							}
 
 						} catch (Exception e) {
 							if (token.equals("NA") || token.equals("")) {
-								(dataManager.variables.elementAt(i)).isNotNA[len] = false;
-								(dataManager.variables.elementAt(i)).setValue(len,dataManager.NA);
+								(dataManager.Variables.elementAt(i)).isNotNA[len] = false;
+								(dataManager.Variables.elementAt(i)).setValue(len,dataManager.NA);
 							} else {
-								(dataManager. variables.elementAt(i)).stringData[len] = token;
-								(dataManager.variables.elementAt(i)).type = Variable.String;
-								(dataManager.variables.elementAt(i)).isDiscret = true;
+								(dataManager.Variables.elementAt(i)).stringData[len] = token;
+								(dataManager.Variables.elementAt(i)).type = Variable.String;
+								(dataManager.Variables.elementAt(i)).isDiscret = true;
 							}
 						}
 					} else {
-						(dataManager.variables.elementAt(i)).stringData[len] = token;
+						(dataManager.Variables.elementAt(i)).stringData[len] = token;
 					}
 				}
 
@@ -140,16 +140,16 @@ public class DataLoader {
 			//dataManager.selectedRows = new boolean[dataManager.RowCount];
 			//dataManager.selectedVariables = new boolean[dataManager.variables.size() - 2];
 
-			 dataManager.Genes = new Vector();
+			 dataManager.Cases = new Vector();
 			 for (int i = 0; i < length; i++) {
-				 dataManager.Genes.add(new Case(dataManager.variables.elementAt(0).stringData [i],i,dataManager));
+				 dataManager.Cases.add(new Case(dataManager.Variables.elementAt(0).stringData [i],i,dataManager));
 				 
 			 }
 			
 
-			for (int i = 0; i < dataManager.variables.size(); i++) {
+			for (int i = 0; i < dataManager.Variables.size(); i++) {
 				
-				Variable var = dataManager.variables.elementAt(i);	    
+				Variable var = dataManager.Variables.elementAt(i);	    
 				var.calculateMean();
 				var.ID = i;
 				var.Buffer = new Vector();
@@ -177,6 +177,124 @@ public class DataLoader {
 	
 	
 	
+	
+	public static void loadFromStringArray(String [] dataSet) {
+		
+		DataManager dataManager = DataManager.getDataManager();
+	        
+		
+		
+
+			dataManager.Variables = new Vector();
+
+			String line = dataSet [0];
+			
+			MyStringTokenizer stk = new MyStringTokenizer(line);
+			int col = 0;
+			while (stk.hasMoreTokens()) {
+				dataManager.Variables.add(new Variable(dataManager,stk.nextToken(),Variable.Double, col));
+				col++;
+			}
+
+		
+
+			for (int i = 0; i < dataManager.Variables.size(); i++) {
+				Variable var = dataManager.Variables.elementAt(i);
+				var.setColumn(new double[dataSet.length-1]);
+				var.isNotNA = new boolean[dataSet.length-1];
+				var.stringData = new String[dataSet.length-1];
+			}
+			
+			
+			
+			int len = 0;
+			
+			
+		  for (int k = 1; k < dataSet.length; k++) {
+
+			    line = dataSet [k];
+				    
+				MyStringTokenizer st = new MyStringTokenizer(line,col);
+				String token;
+		
+				for (int i = 0; i < col; i++) {
+					token = st.nextToken();
+
+					if ((dataManager.Variables.elementAt(i)).type == Variable.Double) {
+						try {
+							(dataManager.Variables.elementAt(i)).setValue(len,new Double(token).doubleValue());
+
+							(dataManager.Variables.elementAt(i)).isNotNA[len] = true;
+							if ((dataManager.Variables.elementAt(i)).getValue(len) > (dataManager.Variables.elementAt(i)).max) {
+								(dataManager.Variables.elementAt(i)).max = (dataManager.Variables.elementAt(i)).getValue(len);
+							}
+							if ((dataManager.Variables.elementAt(i)).getValue(len) < (dataManager.Variables.elementAt(i)).min) {
+								(dataManager.Variables.elementAt(i)).min = (dataManager.Variables.elementAt(i)).getValue(len);
+							}
+
+							if ((dataManager.Variables.elementAt(i)).getValue(len) > dataManager.maxValue) {
+								dataManager.maxValue = (dataManager.Variables.elementAt(i)).getValue(len);
+							}
+							if ((dataManager.Variables.elementAt(i)).getValue(len) < dataManager.minValue) {
+								dataManager.minValue = (dataManager.Variables.elementAt(i)).getValue(len);
+							}
+
+						} catch (Exception e) {
+							if (token.equals("NA") || token.equals("")) {
+								(dataManager.Variables.elementAt(i)).isNotNA[len] = false;
+								(dataManager.Variables.elementAt(i)).setValue(len,dataManager.NA);
+							} else {
+								(dataManager.Variables.elementAt(i)).stringData[len] = token;
+								(dataManager.Variables.elementAt(i)).type = Variable.String;
+								(dataManager.Variables.elementAt(i)).isDiscret = true;
+							}
+						}
+					} else {
+						(dataManager.Variables.elementAt(i)).stringData[len] = token;
+					}
+				}
+
+				len++;
+			}
+
+		System.out.println("len" + len);
+
+			
+
+			 dataManager.Cases = new Vector();
+			 for (int i = 0; i < dataSet.length-1; i++) {
+				 dataManager.Cases.add(new Case(dataManager.Variables.elementAt(0).stringData [i],i,dataManager));
+				 
+			 }
+			
+
+			for (int i = 0; i < dataManager.Variables.size(); i++) {
+				
+				Variable var = dataManager.Variables.elementAt(i);	    
+				var.calculateMean();
+				var.ID = i;
+				var.Buffer = new Vector();
+				
+				for (int j = 0; j < var.stringData.length; j++) {
+					if (Tools.doesntContain(var.Buffer, var.stringData [j])) var.Buffer.add(var.stringData [j]);
+				    if (var.Buffer.size()>Settings.DiscretLimit) {
+				    	var.setDiscret(false);
+				    	break;  
+				    }
+				   
+				}
+				
+				var.Buffer = Tools.sortBuffer(var.Buffer);
+				
+			}
+			
+			
+
+		
+		
+		
+		
+	} 
 	
 	
 	

@@ -21,8 +21,7 @@ public class Barchart extends GUI.Window implements IPlot{
 	
 	String[] data;
 
-	Point point1, point2;
-
+	
 	Barchart barchart;
 
 	Image image;
@@ -31,11 +30,13 @@ public class Barchart extends GUI.Window implements IPlot{
 	
 	int abstandRechts = 20;
 
-	int abstandOben = 20;
+	int abstandOben = 32;
+	
+	int yName = 15;
 
 	int BarHeigth = 16;
 	
-	int BarSpace = 8;
+	int BarSpace = 12;
 
 	int abstandString = 5;
 
@@ -95,8 +96,7 @@ public class Barchart extends GUI.Window implements IPlot{
 
 	
 	public void addSelection(Point point1, Point point2) {
-
-		
+        		
 		
 		boolean selected = false;	
 
@@ -105,14 +105,14 @@ public class Barchart extends GUI.Window implements IPlot{
 			
 			if (Tools.containsRectInRect(
 
-			x+abstandLinks,
+			abstandLinks+x,
 
-			y+ abstandOben + i * (BarHeigth+BarSpace),
+			abstandOben+y + i * (BarHeigth+BarSpace),
 
-			x+abstandLinks+ (int) Math.round((width - abstandLinks - abstandRechts)
+			abstandLinks+ x+(int) Math.round((width - abstandLinks - abstandRechts)
 							* bars.elementAt(i).barRel),
 
-			y+abstandOben + i * (BarSpace+ BarHeigth) + BarHeigth,
+			abstandOben + y+i * (BarSpace+ BarHeigth) + BarHeigth,
 
 			point1.x, point1.y, point2.x, point2.y))
 		
@@ -161,27 +161,14 @@ public class Barchart extends GUI.Window implements IPlot{
 		}
 
 
-		point2 = e.getPoint();
 		
-		if (!(e.getButton() == MouseEvent.BUTTON3 || e.isControlDown())) {
-
-			if (point1 != null && point2 != null) {
-				if (!e.isShiftDown()) SelectionManager.getSelectionManager().deleteSelection();
-				addSelection(point1, point2);
-			}
-
-			point1 = null;
-			point2 = null;
-			SelectionManager.getSelectionManager().repaintWindows();
-		}
 	}
 
 	public void mouseClicked(MouseEvent e) {
 		
 		super.mouseClicked(e);
-	//	System.out.println("Click");
-		point1 = e.getPoint();
-		
+		if (!isMouseIn(e)) return;
+	
 		
 		if (e.getButton() == MouseEvent.BUTTON3 || e.isControlDown()) {
 
@@ -270,11 +257,12 @@ public class Barchart extends GUI.Window implements IPlot{
 
 	public void mouseDragged(MouseEvent e) {
 		super.mouseDragged(e);
+		if (!isMouseIn(e)) return;
 		
-		/*
+		
 		
 		if (labelResizing) {
-			this.abstandLinks = e.getX();
+			this.abstandLinks = e.getX()-x;
 			updateSelection();
 			return;
 		}
@@ -291,7 +279,7 @@ public class Barchart extends GUI.Window implements IPlot{
 		if (heightResizing) {
 			
 				if (resizingBar != null && e.getY()-y>=abstandOben && bars.indexOf(resizingBar)==0 ) {
-				this.BarHeigth = (e.getY() - abstandOben);
+				this.BarHeigth = (e.getY() - abstandOben-y);
 			    updateSelection();
 			}
 			return;
@@ -314,10 +302,7 @@ public class Barchart extends GUI.Window implements IPlot{
 		}
 		
 		
-		point2 = e.getPoint();
-		*/
-		
-		this.repaint();
+	
 
 	}
 	
@@ -348,13 +333,19 @@ public class Barchart extends GUI.Window implements IPlot{
     	return bars.elementAt(j);
     }	
 	
+    
+    public boolean isWindowDragged(MouseEvent e) {
+    	
+    	if (abstandLinks+x<= e.getX() && e.getX() <= abstandLinks+x + Tools.getStringSpace(name,container.getGraphics())+3*border && y <= e.getY() && e.getY() <= y+ yName) return true;
+    	return false;
+    	
+    }
 	
 	
 
 	public void mousePressed(MouseEvent e) {
 		super.mousePressed(e);
-		
-		point1 = e.getPoint();
+		if (!isMouseIn(e)) return;
 		
 		if (isLabelResizing(e)) {
 			labelResizing = true;
@@ -377,6 +368,11 @@ public class Barchart extends GUI.Window implements IPlot{
 			return;
 		}
 		
+	}
+	
+	public boolean isResized(MouseEvent e) {
+		if (isLabelResizing(e)||isBarWidthResizing(e)|| isHeightResizing(e)||isSpaceResizing(e)) return true;
+		else return false;
 	}
 
 	public void keyPressed(KeyEvent e) {
@@ -431,34 +427,38 @@ public class Barchart extends GUI.Window implements IPlot{
 		for (int i = 0; i < bars.size(); i++) {
 		
 			bars.elementAt(i).barRel /= max;
-		 //   System.out.print("  "+bars.elementAt(i).name + "  " + bars.elementAt(i).barRel);
 		  
 		}
 		
 		
-		
-		//Collections.sort(barStrings);
         sortByLexico();
         updateSelection();
 	}
 
+	
+	
+	
 	public void calculateAbstandLinks() {
-		this.abstandLinks =  80; return;
+		this.abstandLinks =  90;
 		
-		/*int length = 0;
+		int length = 0;
+		
 		for (int i = 0; i < this.bars.size(); i++) {
 			String s = this.bars.elementAt(i).name;
 			int Width = 0;
 		
-			/*for (int j = 0; j < s.length(); j++)
-				Width += container.getGraphics().getFontMetrics().charWidth(s.charAt(j));
+			for (int j = 0; j < s.length(); j++)
+			{
+				if (container.getGraphics() != null) Width += container.getGraphics().getFontMetrics().charWidth(s.charAt(j));
+			    else Width += 4; 
+			}
 
 			if (length < Width)
 				length = Width;
-*/
-//		}
-/*
-		this.abstandLinks = Math.min(length + 12, 80);*/
+
+		}
+
+		this.abstandLinks = Math.min(length + 12, 80);
 	}
 
 	
@@ -466,6 +466,7 @@ public class Barchart extends GUI.Window implements IPlot{
 	
 	public void updateSelection() {
 
+		if (bars == null) calculateBalken();
 		for (int i = 0; i < bars.size(); i++) {
 
 			Bar bar = bars.elementAt(i);
@@ -584,7 +585,7 @@ public class Barchart extends GUI.Window implements IPlot{
 	}
 	
 	
-public void sortCHR() {
+    public void sortCHR() {
 		
 
 	
@@ -656,24 +657,29 @@ public boolean compareCHR(String a, String b) {
 		return false;
 	}
 	
-	
-	
-	
-	
-	
+
 
 	public void paint(Graphics g) {
-
+        super.paint(g);
+       // Graphics2D g = (Graphics2D) image.getGraphics();
 	
 		if (this.bars == null) {
 			calculateBalken();
 			calculateAbstandLinks();		
 		}
-		super.paint(g);
+		
 		
 		
 		if (g == null) return;
 
+		
+		 g.setColor(Color.BLACK);
+		 g.drawString(name, abstandLinks+x+2*border, y+yName);
+		 g.setColor(Color.GRAY);
+		 g.drawRect(abstandLinks+x,y, Tools.getStringSpace(name,g)+3*border,yName+2*border);
+		 
+		 
+		
 		for (int i = 0; i < bars.size(); i++) {
 
 			g.setColor(Color.BLACK);
@@ -683,35 +689,31 @@ public boolean compareCHR(String a, String b) {
 			if (bar.nameShort == null) bar.nameShort = bar.name;
 			g.drawString(bar.nameShort,
 
-			x + abstandLinks - Tools.getStringSpace(bar.nameShort,g)-5,y+ abstandOben + i * (BarSpace+ BarHeigth) + BarHeigth * 1 / 2 + 5
+			x+abstandLinks - Tools.getStringSpace(bar.nameShort,g)-5,
+			y+abstandOben + i * (BarSpace+ BarHeigth) + BarHeigth * 1 / 2 + 5
 
 			);
 
 			g.setColor(bar.color);
 
-			g.fillRect(x + abstandLinks, y + abstandOben + i *(BarSpace+ BarHeigth), bar.barWidth, BarHeigth);
+			g.fillRect(x+abstandLinks, y+abstandOben + i *(BarSpace+ BarHeigth), bar.barWidth, BarHeigth);
 
 			g.setColor(Color.RED);
 
-			g.fillRect(x + abstandLinks, y + abstandOben + i * (BarSpace+ BarHeigth), bar.barSelectedWidth, BarHeigth);
+			g.fillRect(x+abstandLinks,y+ abstandOben + i * (BarSpace+ BarHeigth), bar.barSelectedWidth, BarHeigth);
 
 			g.setColor(Color.BLACK);
 
-			g.drawRect(x + abstandLinks, y + abstandOben + i * (BarSpace+ BarHeigth), bar.barWidth, BarHeigth);
+			g.drawRect( x+abstandLinks, y+abstandOben + i * (BarSpace+ BarHeigth), bar.barWidth, BarHeigth);
 
 			if (bar.barSelectedWidth == 1) {
 				g.setColor(Color.RED);
-				g.fillRect(x + abstandLinks,y + abstandOben + i * (BarSpace+ BarHeigth), bar.barSelectedWidth, BarHeigth);
+				g.fillRect(x+ abstandLinks,y+ abstandOben + i * (BarSpace+ BarHeigth), bar.barSelectedWidth, BarHeigth);
 			}
 
 		}
 
-		if (point1 != null && point2 != null) {
-			g.setColor(Color.BLACK);
-			g.drawRect(Math.min(point1.x, point2.x), Math.min(point1.y,
-					point2.y), Math.abs(point2.x - point1.x), Math.abs(point2.y
-					- point1.y));
-		}
+	
 
 	}
 
@@ -729,9 +731,9 @@ public boolean compareCHR(String a, String b) {
 	}
 	
 	public boolean isLabelResizing(MouseEvent e) {
-		if ((e.getX() == abstandLinks || e.getX() == abstandLinks-1|| e.getX() == abstandLinks+2) && 
-				(e.getY() - abstandOben)%(BarHeigth + BarSpace)<BarHeigth) {
-			//System.out.println("Treffer");
+		if ((e.getX() == abstandLinks+x || e.getX() == abstandLinks+x-1|| e.getX() == abstandLinks+x+2) && 
+			e.getY()>=abstandOben+y &&	(e.getY() - abstandOben-y)%(BarHeigth + BarSpace)<BarHeigth) {
+			
 			return true;
 		}
 		else return false;
@@ -742,9 +744,10 @@ public boolean compareCHR(String a, String b) {
 		
 		Bar bar = getBar(e);
 		
-		if (bar != null && (abstandLinks + bar.barWidth == e.getX() || abstandLinks + bar.barWidth == e.getX()-1||abstandLinks + bar.barWidth == e.getX()-1)
-				&& 
-				(e.getY() - abstandOben)%(BarHeigth + BarSpace)<BarHeigth) {
+		if (bar != null && 
+			(abstandLinks+x + bar.barWidth == e.getX() || abstandLinks +x+ bar.barWidth == e.getX()-1||abstandLinks +x+ bar.barWidth == e.getX()-1)
+				&& e.getY()>=abstandOben+y &&
+				(e.getY() - abstandOben-y)%(BarHeigth + BarSpace)<BarHeigth) {
 		
 			return true;
 		}
@@ -757,8 +760,8 @@ public boolean compareCHR(String a, String b) {
 		Bar bar = getBar(e);
 		
 		if (bar != null && bars.indexOf(bar) == 0
-				&& 
-				((e.getY() - abstandOben)%(BarHeigth + BarSpace)==BarHeigth || (e.getY() - abstandOben)%(BarHeigth + BarSpace)==BarHeigth-1 ||(e.getY() - abstandOben)%(BarHeigth + BarSpace)==BarHeigth+1)) {
+				&& e.getY()>=abstandOben+y &&
+				((e.getY() - abstandOben-y)%(BarHeigth + BarSpace)==BarHeigth || (e.getY() - abstandOben-y)%(BarHeigth + BarSpace)==BarHeigth-1 ||(e.getY() - abstandOben-y)%(BarHeigth + BarSpace)==BarHeigth+1)) {
 			//System.out.println("Treffer");
 			return true;
 		}
@@ -771,8 +774,8 @@ public boolean compareCHR(String a, String b) {
 		Bar bar = getBar(e);
 		
 		if (bar != null
-				&& 
-				(e.getY() - abstandOben)%(BarHeigth + BarSpace)==0 || (e.getY() - abstandOben)%(BarHeigth + BarSpace)==BarHeigth + BarSpace-1 ||(e.getY() - abstandOben)%(BarHeigth + BarSpace)==+1) {
+				&& e.getY()>=abstandOben+y &&
+				(e.getY() - abstandOben-y)%(BarHeigth + BarSpace)==0 || (e.getY() - abstandOben-y)%(BarHeigth + BarSpace)==BarHeigth + BarSpace-1 ||(e.getY() - abstandOben-y)%(BarHeigth + BarSpace)==+1) {
 			//System.out.println("Treffer");
 			return true;
 		}
@@ -795,6 +798,9 @@ public boolean compareCHR(String a, String b) {
 	
 
 	public String getToolTipText(MouseEvent e) {
+		System.out.println("dfddfdfdfdfdfdf");
+		
+		
 		if (e.isControlDown()) {
 			Bar bar =  this.getBar(e);
 
@@ -829,8 +835,10 @@ public boolean compareCHR(String a, String b) {
 	public void mouseMoved(MouseEvent arg0) {
 		//System.out.println("Moved");
 		super.mouseMoved(arg0);
+		if (!isMouseIn(arg0)) return;
+
 		// TODO Auto-generated method stub
-		/*
+		
         if (isLabelResizing(arg0) || isBarWidthResizing(arg0)) {
         	container.setCursor(new Cursor(Cursor.E_RESIZE_CURSOR) );
         	return;
@@ -842,9 +850,8 @@ public boolean compareCHR(String a, String b) {
         	return;
         }
        
-        	container.setCursor(new Cursor(Cursor.DEFAULT_CURSOR ) );
-        
-       */      
+      //  container.setCursor(new Cursor(Cursor.DEFAULT_CURSOR ) );
+             
         
 	}
 
@@ -871,9 +878,11 @@ public boolean compareCHR(String a, String b) {
 		}
 		
 		public boolean select() {
+			
+
 			boolean selected = false;
 			for (int i = 0; i < variables.size(); i++) {
-				variables.elementAt(i).select(true);
+				variables.elementAt(i).select();
 				selected = true;
 			}
 			return selected;

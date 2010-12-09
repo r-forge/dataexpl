@@ -10,9 +10,12 @@ import java.util.Vector;
 
 import javax.swing.JApplet;
 
+import WindowManager.SelectionManager;
+
 import Data.DataLoader;
 import Data.DataManager;
 import Data.Variable;
+import DataSet.Data;
 import GUI.Barchart.Barchart;
 
 public class ContainerApplet extends JApplet{
@@ -29,34 +32,30 @@ public class ContainerApplet extends JApplet{
 		//String file = getParameter("File");
 	    DataManager dm = DataManager.getDataManager();
 
-	    //dm.openFile("Cars2004.txt",null);
-	    dateiLaden();
+	   //dm.openFile("Cars2004.txt",null);
+	   
+	   DataLoader.loadFromStringArray(Data.data);
+	  // dateiLaden();
 		
 		
 		if (container == null) {
-    		container = new Container();  
+			container = SelectionManager.getSelectionManager().getCurrentContainer();
     		container.applet = this;
-    		
-    		for (int i = 0; i < container.windows.size(); i++) {
-    			Window w = container.windows.elementAt(i);
-    			addMouseListener(w);
-    			addMouseMotionListener(w);
-    		}
-    		
+    		addMouseListener(container);
+   			addMouseMotionListener(container);
     	}
 		
 		
 		
-        for (int i = 0; i < dm.variables.size(); i++) {
-		        Variable var = dm.variables.elementAt(i);	
+        for (int i = 0; i < dm.Variables.size(); i++) {
+		        Variable var = dm.Variables.elementAt(i);	
 		        if (var.type==Variable.String) {
 		        	
-		        Barchart bar = new Barchart(container, var.name, dm.Genes, var.getStringData());
-		        container.windows.add(bar);
+		        Barchart bar = new Barchart(container, var.name, dm.Cases, var.getStringData());
+		        container.add(bar,false);
 		        addMouseListener(bar);
-    			addMouseMotionListener(bar);
-    			bar.x = container.getWidth()*i/4;
-    			bar.y = container.getHeight()*i/4;
+	   			addMouseMotionListener(bar);
+    			
 	
 		}
 
@@ -83,11 +82,11 @@ public class ContainerApplet extends JApplet{
 
 
 
-	
+	/*
 
       
    // Datei vom Server laden
-  	public void dateiLaden() {
+  //	public void dateiLaden() {
   	// Dateinamen aus der OberflŠche holen
   	java.lang.String strDatei = new String(getParameter("File"));
 
@@ -114,14 +113,14 @@ public class ContainerApplet extends JApplet{
   	// BufferedReader Ÿber den InputStream legen
   	java.io.BufferedReader br = new java.io.BufferedReader(new java.io.InputStreamReader(file));
 
-  	DataLoader.loadGeneExpressions(DataManager.getDataManager(),br,null,null);
+  	DataLoader.loadFile(br,null,null);
 		
   	
   }
   	
   	
   	
-  	
+  	*/
 
 
 	public void mouseReleased(MouseEvent e) {

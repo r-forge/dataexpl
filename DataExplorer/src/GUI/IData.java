@@ -213,7 +213,7 @@ public class IData extends JFrame {
 		openFileItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				if (DataManager.getDataManager().variables == null || shouldBeClosed()) {
+				if (DataManager.getDataManager().Variables == null || shouldBeClosed()) {
 				closeDataSet();
 				
 				infoPanel.removeAll();
@@ -277,7 +277,7 @@ public class IData extends JFrame {
 
 			public void actionPerformed(ActionEvent e) {
 				
-				if (DataManager.getDataManager().variables != null && shouldBeClosed()) {
+				if (DataManager.getDataManager().Variables != null && shouldBeClosed()) {
 				closeDataSet();
 				}
 			}
@@ -344,7 +344,7 @@ public class IData extends JFrame {
 					Variable var = vars.elementAt(i);
 					
 					if (var.isDiscret && var.type == Variable.String) {
-					  Barchart bar = new Barchart(cont, var.name, dm.Genes, var.getStringData());	
+					  Barchart bar = new Barchart(cont, var.name, dm.Cases, var.getStringData());	
 					  cont.add(bar,true);
 					  cont.setVisible(true);
 					}
@@ -361,15 +361,13 @@ public class IData extends JFrame {
 
 				DataManager dm = DataManager.getDataManager();
 			
-				GlobalView frame = new GlobalView("Heatmap Gene Expressions", dm.variables, dm.Genes);
-				
+			
 				int pixelW = Settings.PixelW;
 				int pixelH = Settings.PixelH;
 				
-				if (dm.Genes.size() < 400) pixelH = 400 / dm.Genes.size();
-				if (dm.variables.size() < 560) pixelW = 560 / dm.variables.size();
-				frame.applyNewPixelSize(pixelW,pixelH);
-
+				if (dm.Cases.size() < 400) pixelH = 400 / dm.Cases.size();
+				if (dm.Variables.size() < 560) pixelW = 560 / dm.Variables.size();
+				
 			}
 		});
 		plotsMenu.add(item);
@@ -541,8 +539,8 @@ public class IData extends JFrame {
 		    treeNode = new DefaultMutableTreeNode("Data");
 			
 					
-			for (int i = 0; i < DataManager.getDataManager().variables.size(); i++) {
-				Variable var = DataManager.getDataManager().variables.elementAt(i);
+			for (int i = 0; i < DataManager.getDataManager().Variables.size(); i++) {
+				Variable var = DataManager.getDataManager().Variables.elementAt(i);
 				DataTreeNode Experiment = new DataTreeNode(var);
 				treeNode.add(Experiment);
 			}

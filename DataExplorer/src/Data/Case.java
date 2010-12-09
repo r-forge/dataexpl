@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.util.Vector;
 
 import Clustering.NodeCase;
-import GUI.IPlot;
 
 public class Case implements ISelectable,NodeCase{
 	public String Name;
@@ -26,13 +25,13 @@ public class Case implements ISelectable,NodeCase{
 		
 	}
 	
-	public void select(boolean weiter) {
+	public void select() {
 		selected = true;
 	
 	}
 	
 	
-	public void unselect(boolean weiter) {
+	public void unselect() {
 		selected = false;
 	
 	}
@@ -156,10 +155,7 @@ public class Case implements ISelectable,NodeCase{
 		return null;
 	}
 
-	public Vector<IPlot> getBarchartToColors() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 
 }

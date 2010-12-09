@@ -624,6 +624,7 @@ public static boolean isLineInRect(int x1, int y1, int x2, int y2, int Rx1,
 	
 	public static int getStringSpace(String s,Graphics g) {
 		int Width = 0;
+		if (g == null) return s.length()*5;
 		if (s == null) return 0;
 		
 		for (int i = 0; i < s.length(); i++)

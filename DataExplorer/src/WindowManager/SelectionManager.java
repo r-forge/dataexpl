@@ -38,11 +38,11 @@ public class SelectionManager {
 	
 	public void deleteSelection() {
 		DataManager dm = DataManager.getDataManager();
-		for (int i = 0; i < dm.Genes.size(); i++) {
-			dm.Genes.elementAt(i).unselect(true);
+		for (int i = 0; i < dm.Cases.size(); i++) {
+			dm.Cases.elementAt(i).unselect();
 		}
-		for (int i = 0; i < dm.variables.size(); i++) {
-			dm.variables.elementAt(i).unselect(true);
+		for (int i = 0; i < dm.Variables.size(); i++) {
+			dm.Variables.elementAt(i).unselect();
 		}
 	}
 	
@@ -62,12 +62,12 @@ public class SelectionManager {
 
 		int selectedGenes = 0;
 		int anzahlGenes = 0;
-		if (DataManager.getDataManager().Genes != null) {
-			for (int i = 0; i < DataManager.getDataManager().Genes.size(); i++) {
-				if (DataManager.getDataManager().Genes.elementAt(i) != null
-						&& DataManager.getDataManager().Genes.elementAt(i).isSelected())
+		if (DataManager.getDataManager().Cases != null) {
+			for (int i = 0; i < DataManager.getDataManager().Cases.size(); i++) {
+				if (DataManager.getDataManager().Cases.elementAt(i) != null
+						&& DataManager.getDataManager().Cases.elementAt(i).isSelected())
 					selectedGenes++;
-				if (DataManager.getDataManager().Genes.elementAt(i) != null)
+				if (DataManager.getDataManager().Cases.elementAt(i) != null)
 					anzahlGenes++;
 			}
 
@@ -78,10 +78,10 @@ public class SelectionManager {
 		}
 
 		int selectedExps = 0;
-		if (DataManager.getDataManager().variables != null) {
-			int anzahlExps = DataManager.getDataManager().variables.size();
-			for (int i = 0; i < DataManager.getDataManager().variables.size(); i++) {
-				if (DataManager.getDataManager().variables.elementAt(i).isSelected())
+		if (DataManager.getDataManager().Variables != null) {
+			int anzahlExps = DataManager.getDataManager().Variables.size();
+			for (int i = 0; i < DataManager.getDataManager().Variables.size(); i++) {
+				if (DataManager.getDataManager().Variables.elementAt(i).isSelected())
 					selectedExps++;
 
 			}

@@ -61,56 +61,18 @@ public class Variable implements ISelectable,NodeCase{
 		this.dataManager = dataManager;
 	}
 
-	public void select(boolean weiter) {
-		this.selected = true;
-	
-
-
-		
+	public void select() {
+		this.selected = true;	
 	}
 
 	public boolean isSelected() {
-		//for (int i = 0; i < isSelected.length; i++) {
-			//if (isSelected[i])
-				//return true;
-//		}
+		
 		return selected;
-		//if (type == Variable.String) return true;
-			
-	//	return false;
+		
 	}
 
-	public void unselect(boolean weiter) {
+	public void unselect() {
 		this.selected = false;
-		
-		
-		//for (int i = 0; i < isSelected.length; i++) {
-			//isSelected[i] = false;
-	//	}
-		/*
-		
-		if (weiter && dataManager.cghVariables != null) {
-		
-for (int i =0; i < dataManager.cghVariables.size(); i++) {
-			
-			String var = new StringTokenizer(dataManager.cghVariables.elementAt(i).name,".").nextToken();
-			
-			
-			if (name.equals(var)) dataManager.cghVariables.elementAt(i).unselect(false);
-		}
-
-		}*/
-
-		
-		
-		
-		
-		
-		
-		
-		
-
-
 	}
 
 	
@@ -237,8 +199,8 @@ for (int i =0; i < dataManager.cghVariables.size(); i++) {
 		// TODO Auto-generated method stub
 		
 		Vector<ISelectable> v = new Vector();
-		for (int i = 0; i < dataManager.Genes.size(); i++) {
-			v.add(dataManager.Genes.elementAt(i));
+		for (int i = 0; i < dataManager.Cases.size(); i++) {
+			v.add(dataManager.Cases.elementAt(i));
 		}
 		return v;
 	}

@@ -35,9 +35,9 @@ public class DataManager {
 	
 	public static DataManager dataManager;
 	
-	public Vector<Variable> variables;
+	public Vector<Variable> Variables;
 
-	public Vector<Case> Genes;
+	public Vector<Case> Cases;
 	
 	public RConnection rConnection;
 
@@ -61,7 +61,15 @@ public class DataManager {
 		return dataManager;
 	}
 	
+	
 	public static void close() {
+		if (dataManager == null) return;
+		
+		dataManager.Variables = new Vector();
+		dataManager.Cases = new Vector();
+		dataManager.minValue = 0;
+		dataManager.maxValue = 0;
+		
 		dataManager = null;
 	}
 	
@@ -88,7 +96,7 @@ public class DataManager {
 				if (fileName == null) bfr = new BufferedReader(new FileReader(fileDialog.getDirectory() + "/" + fileDialog.getFile()));
 				else bfr = new BufferedReader(new FileReader(new File(fileName)));
 				
-				DataLoader.loadGeneExpressions(this, bfr, fileName, fileDialog);
+				DataLoader.loadFile(bfr, fileName, fileDialog);
 
 
 			} catch (Exception e) {
@@ -131,8 +139,8 @@ public class DataManager {
 		
 		
 		int a = 0;
-		for (int j = 0; j< Genes.size(); j++) {
-		if (Genes.elementAt(j).isSelected()) {
+		for (int j = 0; j< Cases.size(); j++) {
+		if (Cases.elementAt(j).isSelected()) {
 			
 			a++;
 			for (int i = 0; i < Experiments.size(); i++) {
@@ -179,15 +187,15 @@ public class DataManager {
 	
 	
 	public double[] getRowData(int row) {
-		double[] rowData = new double[variables.size()];
+		double[] rowData = new double[Variables.size()];
 		for (int i = 0; i < rowData.length; i++) {
-			rowData[i] = variables.elementAt(i).getValue(row);
+			rowData[i] = Variables.elementAt(i).getValue(row);
 		}
 		return rowData;
 	}
 
 	public boolean isRowSelected(int row) {
-		return (Genes.elementAt(row).isSelected());
+		return (Cases.elementAt(row).isSelected());
 	
 	}
 
@@ -201,7 +209,7 @@ public class DataManager {
 
 	public void selectRow(int row) {
 		
-		Genes.elementAt(row).select(true);
+		Cases.elementAt(row).select();
 	
 	}
 	
@@ -209,14 +217,14 @@ public class DataManager {
 	
 	
 	public void deleteSelection() {
-		if (variables != null) {
-		for (int i = 0; i < this.variables.size(); i++) {
-			variables.elementAt(i).unselect(false);
+		if (Variables != null) {
+		for (int i = 0; i < this.Variables.size(); i++) {
+			Variables.elementAt(i).unselect();
 		}
 		
 		
-		for (int i = 0; i < this.Genes.size(); i++) {
-			Genes.elementAt(i).unselect(false);
+		for (int i = 0; i < this.Cases.size(); i++) {
+			Cases.elementAt(i).unselect();
 		}
 		
 		}
@@ -226,11 +234,11 @@ public class DataManager {
 	
 
 	public void selectGenesClones() {
-		if (variables != null) {
+		if (Variables != null) {
 		
 	
-		for (int i = 0; i < this.Genes.size(); i++) {
-			Genes.elementAt(i).select(false);
+		for (int i = 0; i < this.Cases.size(); i++) {
+			Cases.elementAt(i).select();
 		}
 		
 		}	
@@ -275,11 +283,11 @@ public class DataManager {
 	
 
 	public Vector<Variable> getVariables() {
-		return variables;
+		return Variables;
 	}
 
 	public void setVariables(Vector<Variable> variables) {
-		this.variables = variables;
+		this.Variables = variables;
 	}
 
 	
@@ -310,11 +318,11 @@ public class DataManager {
 	}
 
 	public Vector<Variable> getExperiments() {
-		return variables;
+		return Variables;
 	}
 
 	public void setExperiments(Vector<Variable> experiments) {
-		variables = experiments;
+		Variables = experiments;
 	}
 
 	

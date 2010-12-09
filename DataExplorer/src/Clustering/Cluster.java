@@ -21,7 +21,7 @@ public class Cluster {
 	
 	public void select() {
 		for (int i = 0; i < items.size(); i++) {
-			items.elementAt(i).select(true);
+			items.elementAt(i).select();
 		} 
 	}
 	

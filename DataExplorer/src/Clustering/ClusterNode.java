@@ -270,7 +270,7 @@ public class ClusterNode {
 		
 		
 		for (int i = 0; i < this.cluster.items.size(); i++) {
-			cluster.items.elementAt(i).select(true);
+			cluster.items.elementAt(i).select();
 			
 		}
 			

@@ -7,9 +7,9 @@ import GUI.IPlot;
 
 public interface ISelectable {
 
-	public void select(boolean weiter);
+	public void select();
 	
-	public void unselect(boolean weiter);
+	public void unselect();
 	
 	public boolean isSelected();
 	
@@ -19,9 +19,6 @@ public interface ISelectable {
 	
 	public boolean isGene();
 	
-	public boolean isClone();
-	
-	public boolean isCGHVariable();
 	
 	public int getID();
 	
