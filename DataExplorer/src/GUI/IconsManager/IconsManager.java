@@ -37,6 +37,7 @@ public class IconsManager {
 		numImageIcon = new ImageIcon(this.readGif("num.gif"));
 		contImageIcon = new ImageIcon(this.readGif("alpha.gif"));
 
+		/*
 		geneImageIcon = new ImageIcon(this.readGif("Gene.gif"));
 		System.out.println("Gene Logo loaded...");
 		
@@ -63,17 +64,17 @@ public class IconsManager {
 
 		hclustIcon = new ImageIcon(this.readGif("hclust.gif"));
 		System.out.println("HClustering Logo loaded...");
-
+*/
 		CollapsedIcon = new ImageIcon(this.readGif("Collapsed.GIF"));
 		System.out.println("Collapsed Logo loaded...");
 
 		ExpandedIcon = new ImageIcon(this.readGif("Expanded.GIF"));
 		System.out.println("Expanded Logo loaded...");
 
-		
+		/*
 		logoIcon = new PicCanvas(new ImageIcon(this.readGif("logo.gif"))
 				.getImage(), frame);
-
+*/
 		contIcon = new PicCanvas(new ImageIcon(this.readGif("num.gif"))
 				.getImage(), frame);
 		numIcon = new PicCanvas(new ImageIcon(this.readGif("alpha.gif"))
@@ -87,7 +88,7 @@ public class IconsManager {
 		try {
 			JarFile MJF;
 			try {
-				MJF = new JarFile("Seurat.jar");
+				MJF = new JarFile("DataExpl.jar");
 			} catch (Exception e) {
 				MJF = new JarFile(System.getProperty("java.class.path"));
 			}

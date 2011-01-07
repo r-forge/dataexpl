@@ -190,10 +190,33 @@ public class Variable implements ISelectable,NodeCase{
 	}
 	
 	
+	/**/
 	public String [] getStringData() {
 		// TODO Auto-generated method stub
 		return stringData;
 	}
+	
+	
+	
+	
+	/*returns String array to selected cases*/
+	public String [] getStringData(Vector<ISelectable> cases) {
+		// TODO Auto-generated method stub
+		String [] data = new String [cases.size()];
+		
+		for (int i = 0; i < cases.size(); i++) {
+			data [i] = stringData [cases.elementAt(i).getID()];
+		}
+		
+		return data;
+	}
+
+	
+	
+	
+	
+	
+	
 
 	public Vector<ISelectable> getVariables() {
 		// TODO Auto-generated method stub

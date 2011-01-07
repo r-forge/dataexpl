@@ -2,13 +2,16 @@ package Data;
 
 
 import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.FileDialog;
 import java.awt.Panel;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Vector;
 import DataTree.*;
 
@@ -22,11 +25,14 @@ import org.rosuda.REngine.Rserve.RConnection;
 
 import Clustering.Clustering;
 import DataTree.DataTreeNode;
+import GUI.Container;
 import GUI.IData;
+import GUI.Window;
 import GUI.IconsManager.IconsManager;
 import Settings.Settings;
 import Tools.Tools;
 import WindowManager.ISelectable;
+import WindowManager.SelectionManager;
 
 
 
@@ -45,6 +51,7 @@ public class DataManager {
 
 	public double minValue, maxValue;
 
+	String file;
 
 	
 	
@@ -85,6 +92,8 @@ public class DataManager {
 			System.out.println("Open File");
 			fileDialog = new FileDialog(frame, "Open File", 0);
 			fileDialog.setVisible(true);
+			file = fileDialog.getDirectory() + "/" + fileDialog.getFile();
+
 		}
 
 		if (fileName != null || fileDialog.getFile() != null) {
@@ -112,9 +121,6 @@ public class DataManager {
 
 	}
 
-	
-	
-	
 	
 	
 	

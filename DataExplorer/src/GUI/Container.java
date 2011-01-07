@@ -15,31 +15,58 @@ import java.util.Vector;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.ToolTipManager;
 
 import WindowManager.SelectionManager;
 
-public class Container extends JFrame implements MouseMotionListener, MouseListener{
+public class Container extends JFrame{
 	
-	public Vector<Window> windows = new Vector();
+	public ContainerPanel panel;
 	
-	public JApplet applet;
-
-	// Selection Points point1 = mouseClicked, point2 = mouseReleased
-	Point point1, point2;
-   
-	//Image image;
-	
-	public Container() {
-	    super("Container");
+	public Container(String name) {
+	    super(name);
 		this.setBounds(400,0,800,800);
-		this.addMouseMotionListener(this);
-		this.addMouseListener(this);
-		windows = new Vector();
-		//this.getContentPane().setLayout(new  BorderLayout());
-		//this.getContentPane().add(panel,BorderLayout.CENTER);
+		
+		panel = new ContainerPanel(this);
+		this.getContentPane().setLayout(new  BorderLayout());
+		this.getContentPane().add(panel,BorderLayout.CENTER);
 		
 		
 	}
+	
+	
+	public void add(Window w, boolean reorder) {
+		panel.add(w,reorder);
+	}
+	
+	public Vector<Window> getWindowVector() {
+		return panel.windows;
+	}
+	
+	
+	
+public class ContainerPanel extends JPanel implements MouseMotionListener, MouseListener{
+	
+	public Vector<Window> windows = new Vector();
+ 	public JApplet applet;
+	Point point1, point2;
+	public Container container;
+
+    public ContainerPanel(Container cont) {
+    	container = cont;
+    	this.addMouseMotionListener(this);
+		this.addMouseListener(this);
+		windows = new Vector();	
+		
+
+		ToolTipManager.sharedInstance().registerComponent(this);
+		ToolTipManager.sharedInstance().setInitialDelay(500);
+		ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+		ToolTipManager.sharedInstance().setReshowDelay(500);
+		
+    }
+
+	
 	
 	public void removeAllWindows() {
 		windows = new Vector();
@@ -86,6 +113,7 @@ public class Container extends JFrame implements MouseMotionListener, MouseListe
 	
 	public void repaint() {
 		super.repaint();
+		if (windows == null) return; 
 		for (int i = 0;  i < windows.size(); i++) {
 			windows.elementAt(i).repaint();
 		}
@@ -104,11 +132,11 @@ public class Container extends JFrame implements MouseMotionListener, MouseListe
 		        int n = (int)Math.sqrt(windows.size());
 		        if (n*n<windows.size()) n++;
 		        
-		        w.x = (this.getWidth()/n)*(i%n)+50;
-		        w.y = (this.getHeight()/n)*(i/n)+50;
+		        w.x = (container.getWidth()/n)*(i%n)+50;
+		        w.y = (container.getHeight()/n)*(i/n)+50;
 		  
-	            w.width = this.getWidth()/n/2;
-	            w.height = this.getHeight()/n/2;    
+	            w.width = container.getWidth()/n/2;
+	            w.height = container.getHeight()/n/2;    
 	       }     
 	    
 	}
@@ -174,5 +202,15 @@ public class Container extends JFrame implements MouseMotionListener, MouseListe
 		
 	}
 	
+	
+	public String getToolTipText(MouseEvent e) {
+		
+		for (int i = 0; i< windows.size(); i++) {
+			  if (windows.elementAt(i).isMouseIn(e)) return windows.elementAt(i).getToolTip(e);
+		}
+		return null;
+	}
+	
 
+}
 }

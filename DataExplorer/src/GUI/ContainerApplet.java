@@ -14,15 +14,13 @@ import WindowManager.SelectionManager;
 
 import Data.DataLoader;
 import Data.DataManager;
+import Data.SessionLoader;
 import Data.Variable;
-import DataSet.Data;
 import GUI.Barchart.Barchart;
 
 public class ContainerApplet extends JApplet{
 	
 	Container container;
-	
-	
 	
 	
 	public void init()  
@@ -34,24 +32,27 @@ public class ContainerApplet extends JApplet{
 
 	   //dm.openFile("Cars2004.txt",null);
 	   
-	   DataLoader.loadFromStringArray(Data.data);
-	  // dateiLaden();
+	  // DataLoader.loadFromStringArray(Data.data);
+	    new SessionLoader().loadAppletSession();
+	    
+	    // dateiLaden();
 		
 		
 		if (container == null) {
 			container = SelectionManager.getSelectionManager().getCurrentContainer();
-    		container.applet = this;
-    		addMouseListener(container);
-   			addMouseMotionListener(container);
+    		container.panel.applet = this;
+    		addMouseListener(container.panel);
+   			addMouseMotionListener(container.panel);
+   		
     	}
 		
 		
-		
+		/*
         for (int i = 0; i < dm.Variables.size(); i++) {
 		        Variable var = dm.Variables.elementAt(i);	
 		        if (var.type==Variable.String) {
 		        	
-		        Barchart bar = new Barchart(container, var.name, dm.Cases, var.getStringData());
+		        Barchart bar = new Barchart(container, var, dm.Cases);
 		        container.add(bar,false);
 		        addMouseListener(bar);
 	   			addMouseMotionListener(bar);
@@ -59,7 +60,7 @@ public class ContainerApplet extends JApplet{
 	
 		}
 
-		}
+		}*/
 		
 		
 		
@@ -77,7 +78,7 @@ public class ContainerApplet extends JApplet{
     	  g.setColor(Color.WHITE);
     	  g.fillRect(0,0,this.getWidth(), this.getHeight());
     	
-	    if (container != null) container.paint(g);
+	    if (container != null) container.panel.paint(g);
 	  }
 
 

@@ -55,8 +55,6 @@ public class Barchart extends GUI.Window implements IPlot{
 
 	Color GRAY = new Color(192, 192, 192);
 
-	Vector<ISelectable> variables;
-
 	float colorShift = 0;
 
 	JPopupMenu menu;
@@ -65,12 +63,14 @@ public class Barchart extends GUI.Window implements IPlot{
 	Vector<Bar> bars;
 	
 	
-    public Barchart(GUI.Container container, String name, Vector variables, String[] data) {
+    public Barchart(GUI.Container container, Variable var, Vector cases) {
 		
-		this.name = name;
+		this.name = var.name;
 		this.container = container;
-		this.variables = variables;
-		this.data = data;
+		this.Cases = cases;
+		this.data = var.getStringData(Cases);
+		Variables = new Vector();
+		Variables.add(var);
 		
 		if (IData.getIData().windowMenu != null) IData.getIData().windowMenu.add(item);
 		
@@ -270,7 +270,7 @@ public class Barchart extends GUI.Window implements IPlot{
 			
 				if (resizingBar != null) {
 				Bar bar = getMaxBar();	
-				this.abstandRechts = width - abstandLinks - (e.getX()-x- abstandLinks)*bar.variables.size()/resizingBar.variables.size();
+				this.abstandRechts = width - abstandLinks - (e.getX()-x- abstandLinks)*bar.cases.size()/resizingBar.cases.size();
 			    updateSelection();
 			}
 			return;
@@ -317,6 +317,8 @@ public class Barchart extends GUI.Window implements IPlot{
     }	
     
     
+    
+    
     public Bar getMaxBar() {
     	int max = 0;
     	int j = 0;
@@ -331,6 +333,63 @@ public class Barchart extends GUI.Window implements IPlot{
     	
     	return bars.elementAt(j);
     }	
+    
+    
+    
+    
+    
+    public String getType() {
+    	return "Barchart";
+    }
+    
+    
+    
+    
+    public String getVaribles() {
+    	return name;
+    }
+    
+    
+    
+    
+    public String getToolTip(MouseEvent e) {
+    	if (!isMouseIn(e)) return null;
+    	
+    //	if (e.isControlDown()) 
+    	{
+			Bar bar =  this.getBar(e);
+
+			if (bar != null) {
+				String s = bar.name;
+				int selectedCount = 0, gesamtExperInBalken = 0;
+
+				for (int j = 0; j < this.data.length; j++) {
+					if (this.data[j].equals(s)) {
+						if (getVariable(j) != null
+								&& getVariable(j).isSelected())
+							selectedCount++;
+						gesamtExperInBalken++;
+					}
+				}
+
+				double koeff = (double) selectedCount / gesamtExperInBalken;
+
+				return "<HTML><BODY BGCOLOR = 'WHITE'><FONT FACE = 'Verdana'><STRONG>"
+						+ bar.name
+						+ "<FONT FACE = 'Arial'><br>"
+						+ "</STRONG>"
+						+ (int) Math.round(bar.barAbs*koeff)
+						+ "/"
+						+ bar.barAbs + "	" + "(" + Tools.round100(koeff * 100) + "%)</HTML>";
+
+			}
+		}
+		return null;
+    	
+    }
+    
+    
+    
 	
     
     public boolean isWindowDragged(MouseEvent e) {
@@ -340,6 +399,8 @@ public class Barchart extends GUI.Window implements IPlot{
     	
     }
 	
+    
+    
 	
 
 	public void mousePressed(MouseEvent e) {
@@ -374,19 +435,28 @@ public class Barchart extends GUI.Window implements IPlot{
 		else return false;
 	}
 
+	
+	
+	
 	public void keyPressed(KeyEvent e) {
 	}
 
+	
+	
+	
 	public void keyTyped(KeyEvent e) {
 
 	}
 
+	
+	
+	
 	public void keyReleased(KeyEvent e) {
-
-		
 
 	}
 
+	
+	
 	public void calculateBalken() {
 
 		bars = new Vector();
@@ -399,12 +469,14 @@ public class Barchart extends GUI.Window implements IPlot{
 			for (int j = 0; j < barStrings.size(); j++) {
 				if (barStrings.elementAt(j).equals(data[i])) {
 					add = false;
-					bars.elementAt(j).variables.add(getVariable(i));
+					bars.elementAt(j).cases.add(getVariable(i));
 				}
 			}
 			if (add) {
 				barStrings.add(data[i]);
-				bars.add(new Bar(this, data [i],getVariable(i)));
+				bars.add(new Bar(this, data [i]));
+				bars.lastElement().cases.add(getVariable(i));
+
 			}
 		}
 
@@ -412,8 +484,8 @@ public class Barchart extends GUI.Window implements IPlot{
 
 		for (int i = 0; i < bars.size(); i++) {
 			Bar bar = bars.elementAt(i);
-			bar.barRel = bar.variables.size();
-			bar.barAbs = bar.variables.size();
+			bar.barRel = bar.cases.size();
+			bar.barAbs = bar.cases.size();
 			bars.elementAt(i).color = GRAY;
 		}
 		
@@ -434,6 +506,7 @@ public class Barchart extends GUI.Window implements IPlot{
         updateSelection();
 	}
 
+	
 	
 	
 	
@@ -463,6 +536,7 @@ public class Barchart extends GUI.Window implements IPlot{
 	
 	
 	
+	
 	public void updateSelection() {
 
 		if (bars == null) calculateBalken();
@@ -474,11 +548,11 @@ public class Barchart extends GUI.Window implements IPlot{
 			int selectedCount = 0;
 
 			
-			for (int j = 0; j < bar.variables.size(); j++) {
-				if (bar.variables.elementAt(j).isSelected()) selectedCount++;
+			for (int j = 0; j < bar.cases.size(); j++) {
+				if (bar.cases.elementAt(j).isSelected()) selectedCount++;
 			}
 
-			bar.koeff = (double) selectedCount / bar.variables.size();
+			bar.koeff = (double) selectedCount / bar.cases.size();
 			bar.selectedCount = selectedCount;
 			bar.barWidth = (int) Math.round((width - abstandLinks - abstandRechts)* bar.barRel);
 			bar.barSelectedWidth = (int) Math.round((width - abstandLinks - abstandRechts)* bar.barRel * bar.koeff);
@@ -516,6 +590,9 @@ public class Barchart extends GUI.Window implements IPlot{
 		repaint();
 	}
 
+	
+	
+	
 	public void sortByAbsolutSelected() {
 		Vector<Bar> balkenTemp = new Vector();
 		for (int i = 0; i < bars.size(); i++) {
@@ -532,6 +609,9 @@ public class Barchart extends GUI.Window implements IPlot{
 		this.bars = balkenTemp;
 		repaint();
 	}
+	
+	
+	
 
 	public void sortByRelativeSelected() {
 		Vector<Bar> balkenTemp = new Vector();
@@ -551,6 +631,10 @@ public class Barchart extends GUI.Window implements IPlot{
 		repaint();
 	}
 
+	
+	
+	
+	
 	public void sortByReverse() {
 		Vector<Bar> balkenTemp = new Vector();
 		for (int i = 0; i < bars.size(); i++) {
@@ -563,6 +647,9 @@ public class Barchart extends GUI.Window implements IPlot{
 		repaint();
 	}
 
+	
+	
+	
 	public void sortByLexico() {
 		
 		
@@ -582,6 +669,10 @@ public class Barchart extends GUI.Window implements IPlot{
 		this.bars = balkenTemp;
 		repaint();
 	}
+	
+	
+	
+	
 	
 	
     public void sortCHR() {
@@ -614,6 +705,8 @@ public class Barchart extends GUI.Window implements IPlot{
 
 
 
+    
+    
 
 public boolean compareCHR(String a, String b) {
 	int i = 0;
@@ -657,6 +750,10 @@ public boolean compareCHR(String a, String b) {
 	}
 	
 
+	
+	
+	
+	
 
 	public void paint(Graphics g) {
         super.paint(g);
@@ -722,9 +819,13 @@ public boolean compareCHR(String a, String b) {
 
 		int i = (yy - abstandOben) / (BarSpace + BarHeigth);
 
-		if (xx >= abstandLinks && xx <= width - abstandRechts+2 && i < bars.size() && i >=0)
-			return bars.elementAt(i);
-
+		if (xx >= abstandLinks-2 && xx <= width - abstandRechts+2 &&
+			yy >= abstandOben-2 &&  yy <= abstandOben + BarHeigth  + i * (BarSpace+BarHeigth)  	
+		)
+		{
+			if (i >= bars.size()) return null;
+		    return bars.elementAt(i);
+		}
 		return null;
 
 	}
@@ -737,6 +838,9 @@ public boolean compareCHR(String a, String b) {
 		}
 		else return false;
 	}
+	
+	
+	
 	
 	
 	public boolean isBarWidthResizing(MouseEvent e) {
@@ -786,9 +890,9 @@ public boolean compareCHR(String a, String b) {
 	
 	
 	public ISelectable getVariable(int i) {
-		if (variables == null)
+		if (Cases == null)
 			return null;
-		return variables.elementAt(i);
+		return Cases.elementAt(i);
 	}
 	
 
@@ -796,41 +900,7 @@ public boolean compareCHR(String a, String b) {
 	
 	
 
-	public String getToolTipText(MouseEvent e) {
-		System.out.println("dfddfdfdfdfdfdf");
-		
-		
-		if (e.isControlDown()) {
-			Bar bar =  this.getBar(e);
-
-			if (bar != null) {
-				String s = bar.name;
-				int selectedCount = 0, gesamtExperInBalken = 0;
-
-				for (int j = 0; j < this.data.length; j++) {
-					if (this.data[j].equals(s)) {
-						if (getVariable(j) != null
-								&& getVariable(j).isSelected())
-							selectedCount++;
-						gesamtExperInBalken++;
-					}
-				}
-
-				double koeff = (double) selectedCount / gesamtExperInBalken;
-
-				return "<HTML><BODY BGCOLOR = 'WHITE'><FONT FACE = 'Verdana'><STRONG>"
-						+ bar.name
-						+ "<FONT FACE = 'Arial'><br>"
-						+ "</STRONG>"
-						+ (int) Math.round(bar.barAbs*koeff)
-						+ "/"
-						+ bar.barAbs + "	" + "(" + Tools.round100(koeff * 100) + "%)</HTML>";
-
-			}
-		}
-		return null;
-	}
-
+	
 	public void mouseMoved(MouseEvent arg0) {
 		//System.out.println("Moved");
 		super.mouseMoved(arg0);
@@ -868,20 +938,18 @@ public boolean compareCHR(String a, String b) {
 		String nameShort;
 		Color color;
 		int selectedCount;
-		Vector<ISelectable> variables = new Vector();
+		Vector<ISelectable> cases = new Vector();
 
-		public Bar(Barchart panel, String name, ISelectable var) {
+		public Bar(Barchart panel, String name) {
 			this.panel = panel;
 			this.name = name;
-			variables.add(var);
 		}
 		
 		public boolean select() {
 			
-
 			boolean selected = false;
-			for (int i = 0; i < variables.size(); i++) {
-				variables.elementAt(i).select();
+			for (int i = 0; i < cases.size(); i++) {
+				cases.elementAt(i).select();
 				selected = true;
 			}
 			return selected;

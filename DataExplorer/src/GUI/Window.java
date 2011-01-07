@@ -10,23 +10,30 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.ToolTipManager;
 
+import Data.ISelectable;
+import Data.Variable;
+
 public class Window implements MouseListener,MouseMotionListener{
-      public int x=20,y=50, width=300,height= 200;
-	  public String name;
+      
+	  public int x=20,y=50, width=300,height= 200;
+	  
+      public String name;
 	  boolean isMouseIn = false;
 	  public int border = 3;
-
-	//  Image image;
+	  
       public Container container;
       boolean ziehen = false;
       int zX,zY;
       
+      public Vector<ISelectable> Cases;
       
-      
+      public Vector<Variable> Variables;
+    
       public Window() {
     	  
       }
@@ -36,8 +43,39 @@ public class Window implements MouseListener,MouseMotionListener{
 	  public Window(String name,Container container) {
     	  this.name = name;
     	  this.container = container;
-    	 
       }
+	  
+	  public Vector<Variable> getVariables() {
+		  return Variables;
+	  }
+	  
+	  public String getParameters() {
+		  return "";
+	  }
+	  
+	  
+	  public Vector<ISelectable> getCases() {
+		return Cases;
+	  }
+	  
+	  
+	  
+	  
+	  
+	  
+	  public String getToolTip(MouseEvent e) {
+		  return null;
+	  }
+	  
+	  public String getType() {
+		  return "Window";
+	  }
+	  
+	  public String getVariable() {
+		  return "none";
+	  }
+	  
+	  
 	  
 	  
 	  public void paint(Graphics g) {

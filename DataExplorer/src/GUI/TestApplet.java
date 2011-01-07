@@ -26,29 +26,26 @@ Container container;
 	
 	public void init()  
 	 { 
-		System.out.println("Init Applet......");
-		
-		//String file = getParameter("File");
-       
+		System.out.println("Init Applet......");		  
 	    DataManager dm = DataManager.getDataManager();
 
-        if (container!=null) container.removeAllWindows();
+        if (container!=null) container.panel.removeAllWindows();
         container = null;
         	
 		
-		DataLoader.loadFromStringArray(Data.data);
+		DataLoader.loadFile(Data.data,null,null);
 		SelectionManager.getSelectionManager().deleteAllContainers();
 		container = SelectionManager.getSelectionManager().getCurrentContainer();
-    	container.applet = this;
-    	addMouseListener(container);
-   		addMouseMotionListener(container);
+    	container.panel.applet = this;
+    	addMouseListener(container.panel);
+   		addMouseMotionListener(container.panel);
     	
 		
         for (int i = 0; i < dm.Variables.size(); i++) {
 		        Variable var = dm.Variables.elementAt(i);	
 		        if (var.type==Variable.String) {
 		        	
-		        Barchart bar = new Barchart(container, var.name, dm.Cases, var.getStringData());
+		        Barchart bar = new Barchart(container, var, dm.Cases);
 		        container.add(bar,false);
 		        addMouseListener(bar);
 	   			addMouseMotionListener(bar);

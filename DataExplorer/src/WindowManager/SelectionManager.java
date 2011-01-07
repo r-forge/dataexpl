@@ -16,9 +16,9 @@ import Data.DataManager;
 
 public class SelectionManager {
 	
-	public Vector<Container> containers;
+	static public Vector<Container> containers;
 	
-	private Container currentContainer;
+	static private Container currentContainer;
 	
 
 	static SelectionManager selectionManager;
@@ -29,7 +29,16 @@ public class SelectionManager {
 	}
 	
 	public static void close() {
+		if (selectionManager != null) {
+		if (containers != null) {
+			for (int i = 0; i< containers.size(); i++) {
+				containers.elementAt(i).setVisible(false);
+			}
+		}	
+		containers = null;
+		currentContainer = null;
 		selectionManager = null;
+		}
 	}
 	
 	
@@ -55,39 +64,25 @@ public class SelectionManager {
 		if (containers == null) return;
 			
 		for (int i = 0; i < this.containers.size(); i++) {
-			((Container) containers.elementAt(i)).updateSelection();
+			((Container) containers.elementAt(i)).panel.updateSelection();
 		}
 
 		String s = "";
 
-		int selectedGenes = 0;
-		int anzahlGenes = 0;
+		
+
+		int selectedCases = 0;
+		
 		if (DataManager.getDataManager().Cases != null) {
+			int anzahlCases = DataManager.getDataManager().Cases.size();
 			for (int i = 0; i < DataManager.getDataManager().Cases.size(); i++) {
-				if (DataManager.getDataManager().Cases.elementAt(i) != null
-						&& DataManager.getDataManager().Cases.elementAt(i).isSelected())
-					selectedGenes++;
-				if (DataManager.getDataManager().Cases.elementAt(i) != null)
-					anzahlGenes++;
-			}
-
-			s += "Genes: " + selectedGenes + "/" + anzahlGenes + " ("
-					+ (double) (selectedGenes * 10000 / anzahlGenes) / 100
-					+ "%)";
-
-		}
-
-		int selectedExps = 0;
-		if (DataManager.getDataManager().Variables != null) {
-			int anzahlExps = DataManager.getDataManager().Variables.size();
-			for (int i = 0; i < DataManager.getDataManager().Variables.size(); i++) {
-				if (DataManager.getDataManager().Variables.elementAt(i).isSelected())
-					selectedExps++;
+				if (DataManager.getDataManager().Cases.elementAt(i).isSelected())
+					selectedCases++;
 
 			}
-			if (anzahlExps == 0) anzahlExps++;
-			s += "   Samples: " + selectedExps + "/" + anzahlExps + " ("
-					+ (double) (selectedExps * 10000 / anzahlExps) / 100 + "%)";
+			if (anzahlCases == 0) anzahlCases++;
+			s += "   Cases:  " + selectedCases + "/" + anzahlCases + " ("
+					+ (double) (selectedCases * 10000 / anzahlCases) / 100 + "%)";
 
 		}
 
@@ -97,18 +92,24 @@ public class SelectionManager {
 		IData idata = IData.getIData();
 		
 		
-		idata.MainPanel.remove(idata.infoPanel);
-		idata.MainPanel.add(idata.infoPanel, BorderLayout.SOUTH);
+		idata.getContentPane().remove(idata.infoPanel);
 		idata.infoPanel.removeAll();
-		JLabel infoLabel = new JLabel(s);
+		idata.infoLabel.setText(s);
+		idata.infoPanel.add(idata.infoLabel,BorderLayout.WEST);
+			
+		idata.getContentPane().add(idata.infoPanel, BorderLayout.SOUTH);
+		
+		
+		
 		// infoLabel.setFont(new Font("Calibri",Font.PLAIN,12));
 
 		
-		idata.add(infoLabel);
+		//idata.add(infoLabel);
 
 		idata.update(idata.getGraphics());
 		idata.repaint();
-		idata.paint(idata.infoPanel.getGraphics());
+		idata.infoPanel.paint(idata.infoPanel.getGraphics());
+	//	idata.setVisible(true);
 		//idata.updateUI();
 		
 		
@@ -126,13 +127,19 @@ public class SelectionManager {
 	
 	public Container getCurrentContainer() {
 		if (currentContainer == null) {
-		    currentContainer = new Container();
+		    currentContainer = new Container("Container");
 		    containers = new Vector();
 		    containers.add(currentContainer);    
 		}
 		return currentContainer;
 	}
 	
+	
+	public void addContainer(Container cont) {
+		if (containers == null) containers = new Vector();
+		containers.add(cont);
+		currentContainer = cont;
+	}
 	
 	
 }

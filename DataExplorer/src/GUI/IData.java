@@ -93,8 +93,10 @@ public class IData extends JFrame {
 	public JMenu helpMenu;
 	
 	public JMenu plotsMenu;
-
-	Vector<JFrame> windows = new Vector();
+	
+	public JMenu statisticsMenu;
+	
+	public JMenu transformMenu;
 
 	static IData iData;
 
@@ -103,7 +105,7 @@ public class IData extends JFrame {
 
 	JScrollPane objectsPane;
 	JScrollPane datasetsPane;
-	JPanel middlePanel = new JPanel();
+	//JPanel middlePanel = new JPanel();
 
 	
 	
@@ -124,9 +126,9 @@ public class IData extends JFrame {
 	JMenuItem openGeneExpressionItem;
 	JMenuItem openDescriptionItem;
 	JMenuItem openGeneAnnotationsItem;
-	JMenuItem saveGeneExpressions;
+	JMenuItem saveItem;
 	public JMenuItem closeDataset;
-	JPanel west;
+	//JPanel center;
 	
 	
 	
@@ -138,8 +140,8 @@ public class IData extends JFrame {
     
 	public IData() {
 		super("IData");
-		this.setBounds(0, 0, 330, 400);
-		
+		this.setBounds(0, 0, 500, 400);
+		iData = this;
 	//	RConnectionManager.tryToConnect(this);
 		loadMainWindow();
 
@@ -163,6 +165,8 @@ public class IData extends JFrame {
 		fileMenu = new JMenu("File");
 		optionsMenu = new JMenu("Options");
 		helpMenu = new JMenu("Help");
+		transformMenu = new JMenu("Transform");
+		statisticsMenu = new JMenu("Statistics");
 
 		// this.setBounds(20,20,150,450);
 		this.getContentPane().setLayout(new BorderLayout());
@@ -171,30 +175,30 @@ public class IData extends JFrame {
 		IconsManager.getIconsManager().loadLogos(this);
 
 		MainPanel.setLayout(new BorderLayout());
-		middlePanel.setBackground(Color.WHITE);
-    	middlePanel.setBorder(BorderFactory.createEtchedBorder());
-
-		west = new JPanel();
+		MainPanel.setBackground(Color.WHITE);
 	
-		west.setBackground(Color.WHITE);
 
-		MainPanel.add(west, BorderLayout.CENTER);
+		//center = new JPanel();
+	
+	//	center.setBackground(Color.WHITE);
+
+	//	MainPanel.add(center, BorderLayout.CENTER);
 		// MainPanel.add(datasetsPane, BorderLayout.EAST);
 		// MainPanel.add(middlePanel, BorderLayout.CENTER);
 
 		// infoPanel.setBackground(Color.WHITE);
+    	// infoPanel.setBackground(Color.WHITE);
 		infoPanel.setPreferredSize(new Dimension(25, 25));
 
 		infoPanel.setBorder(BorderFactory.createEtchedBorder());
-		MainPanel.add(infoPanel, BorderLayout.SOUTH);
+	
 
 		infoLabel = new JLabel("");
 		// infoPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 		infoPanel.setLayout(new BorderLayout());
 		infoPanel.add(infoLabel, BorderLayout.WEST);
-
-
 	
+		this.getContentPane().add(infoPanel, BorderLayout.SOUTH);
 
 		this.setJMenuBar(menuBar);
 
@@ -214,7 +218,7 @@ public class IData extends JFrame {
 				closeDataSet();
 				
 				infoPanel.removeAll();
-				infoLabel.setText("Loading Geneexpression dataset...");
+				infoLabel.setText("Loading dataset...");
 				MainPanel.remove(infoPanel);
 				infoPanel.add(progressBar, BorderLayout.CENTER);
 				MainPanel.add(infoPanel, BorderLayout.SOUTH);
@@ -234,40 +238,161 @@ public class IData extends JFrame {
 				return;
 				}
 				
-			
+			    setVisible(true);
 				
 			}
 		});
 		fileMenu.add(openFileItem);
 
+		
+		JMenuItem item = new JMenuItem("Open Database");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+	
+			
+				
+			}
+		});
+		fileMenu.add(item);
 	
 			
 		
 		
+		
+		item = new JMenuItem("Open Session");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				if (DataManager.getDataManager().Variables == null || shouldBeClosed()) {
+					closeDataSet();
+					
+					infoPanel.removeAll();
+					infoLabel.setText("Loading dataset...");
+					MainPanel.remove(infoPanel);
+					infoPanel.add(progressBar, BorderLayout.CENTER);
+					MainPanel.add(infoPanel, BorderLayout.SOUTH);
+					update(getGraphics());
+					
+					new SessionLoader().openSession(null,iData);
+					
+					infoLabel.setText("");
+					infoPanel.remove(progressBar);
+					MainPanel.remove(infoPanel);
+					MainPanel.add(infoPanel, BorderLayout.SOUTH);		
+					closeDataset.setEnabled(true);
+					
+					createTree();	
+					SelectionManager.getSelectionManager().repaintWindows();
+					setVisible(true);
+					return;
+					}
+					
+			
+				
+			}
+		});
+		fileMenu.add(item);
+
+		
 
 		fileMenu.addSeparator();
 		
-		saveGeneExpressions = new JMenuItem("Save File");
-		saveGeneExpressions.setEnabled(false);
-		
-		saveGeneExpressions.addActionListener(new ActionListener() {
+		item = new JMenuItem("Save File");
+		item.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				//new SaveSelectionFrame(seurat);
+	
+			
+				
+			}
+		});
+		fileMenu.add(item);
+		
+		
+		item = new JMenuItem("Save Selection");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+	
+			
+				
+			}
+		});
+		fileMenu.add(item);
+		
+		saveItem = new JMenuItem("Save Session");
+	//	saveItem.setEnabled(false);
+		
+		saveItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				new SessionLoader().saveData(getIData());
 
 			}
 		});
-		fileMenu.add(saveGeneExpressions);
+		fileMenu.add(saveItem);
+		
+		
+		fileMenu.addSeparator();
+		
+		
+		JMenu menu = new JMenu("Export as");
+		fileMenu.add(menu);
 		
 		
 		
 		
 		
+		saveItem = new JMenuItem("Export as Applet");
+		//	saveItem.setEnabled(false);
+			
+			saveItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+
+					new SessionLoader().saveSessionApplet(getIData());
+
+				}
+			});
+		menu.add(saveItem);
+			
+	
 		
+			saveItem = new JMenuItem("Export as JPG");
+			
+				
+				saveItem.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+
+						new SessionLoader().saveData(getIData());
+
+					}
+				});
+		menu.add(saveItem);
+				
+			
+				
+				
+		saveItem = new JMenuItem("Export as PDF");
+			
+		
+		saveItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+
+					new SessionLoader().saveData(getIData());
+
+				}
+		});
+		menu.add(saveItem);
+			
 		
 		
 
 
+		
+		fileMenu.addSeparator();
+		
+		
 		closeDataset = new JMenuItem("Close");
 		closeDataset.setEnabled(false);
 		closeDataset.addActionListener(new ActionListener() {
@@ -277,12 +402,13 @@ public class IData extends JFrame {
 				if (DataManager.getDataManager().Variables != null && shouldBeClosed()) {
 				closeDataSet();
 				}
+                setVisible(true);
 			}
 		});
 		fileMenu.add(closeDataset);
 
 		
-		fileMenu.addSeparator();
+	
 		
 		
 		JMenuItem exitItem = new JMenuItem("Quit");
@@ -293,35 +419,9 @@ public class IData extends JFrame {
 		});
 		fileMenu.add(exitItem);
 
-		JMenuItem item = new JMenuItem("Pixel Settings");
-		item.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//new ColorDialog(seurat,seurat,settings.PixelW,settings.PixelH);
-			}
-		});
-		optionsMenu.add(item);
+	
 		
 		
-		
-		
-		item = new JMenuItem("Color Settings");
-		item.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			//	new ColorSettings(seurat);
-			}
-		});
-		optionsMenu.add(item);
-		
-		item = new JMenuItem("Scaling");
-		item.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//new ScaleFrame(seurat);
-			}
-		});
-		optionsMenu.add(item);
-		
-		
-		optionsMenu.addSeparator();
 		
 
 		
@@ -341,7 +441,7 @@ public class IData extends JFrame {
 					Variable var = vars.elementAt(i);
 					
 					if (var.isDiscret && var.type == Variable.String) {
-					  Barchart bar = new Barchart(cont, var.name, dm.Cases, var.getStringData());	
+					  Barchart bar = new Barchart(cont, var, dm.Cases);	
 					  cont.add(bar,true);
 					  cont.setVisible(true);
 					}
@@ -350,6 +450,128 @@ public class IData extends JFrame {
 			}
 		});
 		plotsMenu.add(item);
+		
+		
+		
+		item = new JMenuItem("Pie Chart");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+	
+			
+				
+			}
+		});
+		plotsMenu.add(item);
+		
+		
+		item = new JMenuItem("Dotplot");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+	
+			
+				
+			}
+		});
+		plotsMenu.add(item);
+		
+		
+		item = new JMenuItem("Boxplot");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+	
+			
+				
+			}
+		});
+		plotsMenu.add(item);
+		
+		
+		
+		item = new JMenuItem("Lineplot");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+	
+			
+				
+			}
+		});
+		plotsMenu.add(item);
+		
+		
+		
+		
+		
+		plotsMenu.addSeparator();
+		
+		
+		item = new JMenuItem("Scatterplot");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+	
+			
+				
+			}
+		});
+		plotsMenu.add(item);
+		
+		item = new JMenuItem("SPLOM");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+	
+			
+				
+			}
+		});
+		plotsMenu.add(item);
+		
+		
+		item = new JMenuItem("Parallel Coordinate Plot");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+	
+			
+				
+			}
+		});
+		plotsMenu.add(item);
+		
+		
+		
+		item = new JMenuItem("TS-Plot");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+	
+			
+				
+			}
+		});
+		plotsMenu.add(item);
+		
+		
+		
+		
+		
+		item = new JMenuItem("Mosaic Plot");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+	
+			
+				
+			}
+		});
+		plotsMenu.add(item);
+		
+		
+		
 
 		item = new JMenuItem("Heatmap");
 		item.addActionListener(new ActionListener() {
@@ -368,12 +590,293 @@ public class IData extends JFrame {
 			}
 		});
 		plotsMenu.add(item);
-		plotsMenu.addSeparator();		
-		plotsMenu.addSeparator();
+		
+		
+		
+		
+		
+		
+		plotsMenu.addSeparator();	
+		
+		item = new JMenuItem("Grid");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+	
+			
+				
+			}
+		});
+		plotsMenu.add(item);
+		
+		
+		item = new JMenuItem("Small Multiple");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+	
+			
+				
+			}
+		});
+		plotsMenu.add(item);
+		
+		
+		item = new JMenuItem("Rosette");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+	
+			
+				
+			}
+		});
+		plotsMenu.add(item);
+		
+		
+		
+		
+		
+		
+		
+	
+		
+		
+
+		
+		
+		menuBar.add(transformMenu);
+		
+		item = new JMenuItem("Switch Variable Mode");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				
+			}
+		});
+		transformMenu.add(item);
+		
+		
+		item = new JMenuItem("Transform Variable");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				
+			}
+		});
+		transformMenu.add(item);
+		
+		
+		menu = new JMenu("Derive Variable");
+		transformMenu.add(menu);
+		
+		
+		item = new JMenuItem("from Selection");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				
+			}
+		});
+		menu.add(item);
+		
+		
+		item = new JMenuItem("from Colors");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				
+			}
+		});
+		menu.add(item);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+        menuBar.add(statisticsMenu);
+		
+
+		item = new JMenuItem("Clustering");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				
+			}
+		});
+		statisticsMenu.add(item);
+		
+		
+		item = new JMenuItem("MDS");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				
+			}
+		});
+		statisticsMenu.add(item);
+		
+		
+
+		item = new JMenuItem("PCA");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				
+			}
+		});
+		statisticsMenu.add(item);
+		
+		
+		statisticsMenu.addSeparator();
+
+		item = new JMenuItem("Model Navigator");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				
+			}
+		});
+		statisticsMenu.add(item);
+		
+		
+		
+		
+		
+		
+		
+		
+
+		
+		
+		
 		
 		menuBar.add(optionsMenu);
 		
+		
+		item = new JMenuItem("Toggle Selection");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				
+			}
+		});
+		optionsMenu.add(item);
+		
+		
+		item = new JMenuItem("Select all");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				
+			}
+		});
+		optionsMenu.add(item);
+		
+		
+		item = new JMenuItem("Alpha on Highlight");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				
+			}
+		});
+		optionsMenu.add(item);
+		
+		
+		
+		item = new JMenuItem("Clear Colors");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				
+			}
+		});
+		optionsMenu.add(item);
+		
+		
+		item = new JMenuItem("Preferences");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				
+			}
+		});
+		optionsMenu.add(item);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		windowMenu = new JMenu("Window");
+		
+		
+		item = new JMenuItem("New Container");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				
+			}
+		});
+		windowMenu.add(item);
+		
+		
+		item = new JMenuItem("Container for Variable");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				
+			}
+		});
+		windowMenu.add(item);
+		
+		
+		item = new JMenuItem("Container for Selection");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				
+			}
+		});
+		windowMenu.add(item);
+		
+		
+		
+		item = new JMenuItem("Copy");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				
+			}
+		});
+		windowMenu.add(item);
+		
+		
+		item = new JMenuItem("Toolbox");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				
+			}
+		});
+		windowMenu.add(item);
+		
+		
+		
 		item = new JMenuItem("Close all");
 		item.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -383,14 +886,24 @@ public class IData extends JFrame {
 					s.containers.elementAt(i).setVisible(false);
 					windowMenu.remove(1);
 				}
-				windows = new Vector();
+				
 			}
 		});
 		windowMenu.add(item);
 		windowMenu.addSeparator();
 
 		menuBar.add(windowMenu);
-
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		menuBar.add(helpMenu);
 		
 		item = new JMenuItem("Online Help");
@@ -462,11 +975,7 @@ public class IData extends JFrame {
 
 	public void closeDataSet() {
 
-	
-		for (int i = 0; i < this.windows.size(); i++) {
-			(windows.elementAt(i)).setVisible(false);
-		}
-
+	    
 
 		SelectionManager.close();
 		DataManager.close();
@@ -474,7 +983,7 @@ public class IData extends JFrame {
 		this.getContentPane().removeAll();
 		menuBar.removeAll();
 		infoPanel.removeAll();
-		middlePanel.removeAll();
+		
 
 		loadMainWindow();
 		this.repaint();
@@ -532,7 +1041,8 @@ public class IData extends JFrame {
 	public void createTree() {
 		
 		   
-		    
+		    if (DataManager.getDataManager().Variables== null) return;     
+		
 		    treeNode = new DefaultMutableTreeNode("Data");
 			
 					
@@ -550,7 +1060,7 @@ public class IData extends JFrame {
 			ui.setExpandedIcon(IconsManager.ExpandedIcon);
 			tree.putClientProperty("JTree.lineStyle","None");
 			tree.setCellRenderer( new DataCellRenderer());
-        	west.add(new JScrollPane(tree), BorderLayout.WEST);
+        MainPanel.add(new JScrollPane(tree), BorderLayout.CENTER);
         	
         	
         	/*
@@ -605,8 +1115,7 @@ public class IData extends JFrame {
 	
 
 	public void cleanMiddlePanel() {
-		this.middlePanel.removeAll();
-
+		
 		infoLabel.setText("");
 
 		MainPanel.remove(infoPanel);
